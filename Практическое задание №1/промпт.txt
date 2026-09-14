@@ -1,0 +1,122 @@
+ПРОМПТ ДЛЯ ИИ
+
+
+Ты — эксперт по формату Scratch 3 .sb3 и генератор проектов на Python.
+
+ЗАДАЧА:
+Напиши Python-скрипт, который создаёт файл merge_show.sb3 —
+красивую анимированную визуализацию слияния двух отсортированных
+массивов в Scratch 3.
+
+ПРИМЕР ДАННЫХ:
+• Массив A = [1, 3, 7, 9]      (синяя зона)
+• Массив B = [2, 4, 6, 8, 10]  (зелёная зона)
+• Результат = []               (золотая зона)
+• Ожидаемый результат: [1, 2, 3, 4, 6, 7, 8, 9, 10]
+
+АЛГОРИТМ (обязательно):
+• ОДИН цикл: повторить (a + b) раз
+• Внутри — три вложенных if-else:
+    if i > a  → взять B[j]
+    else if j > b → взять A[i]
+    else if A[i] < B[j] → взять A[i], иначе B[j]
+• После добавления — увеличить i или j
+
+ВИЗУАЛИЗАЦИЯ (обязательно):
+• Космический тёмный фон с градиентом и звёздочками
+• Три светящиеся зоны: синяя (A), зелёная (B), золотая (Результат)
+• Спрайт — золотая звезда с гало и градиентом (SVG)
+• Звезда плавно скользит: к A → к B → к Результату
+• При каждом шаге меняет эффект COLOR (свечение)
+• Пульсирует размером 85 → 130 → 85 при добавлении
+• Финальный салют: 6 вспышек цвета и размера
+• Задержки 0.4–0.8 сек, чтобы преподаватель успел смотреть
+
+ТЕХНИЧЕСКИЕ ТРЕБОВАНИЯ:
+• Только стандартная библиотека Python (json, zipfile, os, shutil, hashlib)
+• SVG-фон и SVG-звезда — прямо в коде, как строки
+• ВАЖНО: SVG-файлы должны быть записаны в .sb3-архив рядом
+  с project.json, и в costume-блоке указан их md5ext
+• id костюмов = md5 от содержимого SVG (hexdigest)
+• Структура project.json строго по спецификации Scratch 3.0
+
+КРИТИЧЕСКИЕ ПРАВИЛА ПО БЛОКАМ:
+1. inputs с вложенными блоками:  [3, "<block_id>", [10, ""]]
+2. inputs с числом:              [1, [4, "5"]]
+3. inputs с текстом:             [1, [10, "текст"]]
+4. inputs CONDITION:             [2, "<block_id_условия>"]
+5. inputs SUBSTACK:              [2, "<block_id_первого_блока_ветки>"]
+6. opcode элементов списка:      data_itemoflist (INDEX внутри inputs)
+7. opcode длины списка:          data_lengthoflist
+8. opcode переменной:            data_variable
+9. НИКОГДА не используй в inputs формат [12, "имя", ...] — это
+   репортёр несуществующей переменной, а не длина/элемент
+10. НИКОГДА не используй [13, "имя", ...] — это не элемент списка
+11. Блоки-репортёры (data_variable, data_itemoflist,
+    data_lengthoflist, operator_*, motion_xposition и т.п.)
+    могут иметь parent=None — не «дочиняй» его
+12. Не обращайся к blocks[...]["inputs"][...][1][1] — это баг:
+    внутри [3, block_id, ...] block_id лежит по индексу [1]
+13. У condition-блоков (operator_gt, operator_lt, operator_add,
+    operator_join и т.п.) parent = id if-блока, ссылающегося
+    на них через CONDITION
+
+ХЕЛПЕРЫ, КОТОРЫЕ ИСПОЛЬЗОВАТЬ:
+• mk(opcode, nxt, par, inp, fld, top, x, y) → id нового блока
+• var(name, id) → блок-репортёр переменной
+• item(list_name, list_id, idx_bid) → блок «элемент (idx) из списка»
+• length(list_name, list_id) → блок «длина списка»
+• chain(first, *rest) — связывает блоки: first→rest[0]→rest[1]→…
+  (проставляет next и parent)
+
+СТРУКТУРА project.json:
+{
+  "targets": [
+    { "isStage": true, "name": "Stage",
+      "variables": {"<id>": ["имя", значение], ...},
+      "lists":     {"<id>": ["имя", [значения]], ...},
+      "blocks": {}, "costumes": [...], "sounds": [...],
+      "currentCostume": 0, "layerOrder": 0, ... },
+    { "isStage": false, "name": "Звезда",
+      "variables": {}, "lists": {}, "blocks": { ... },
+      "costumes": [{"name":"star","assetId":"<md5>",
+                    "md5ext":"<md5>.svg","dataFormat":"svg",
+                    "rotationCenterX":50,"rotationCenterY":50,
+                    "bitmapResolution":1}],
+      "visible": false, "x": 0, "y": -260, "size": 85,
+      "direction": 90, "rotationStyle": "all around", ... }
+  ],
+  "monitors": [
+    { "id": "<list_id>", "mode": "list",
+      "opcode": "data_listcontents",
+      "params": {"LIST": "A"},
+      "spriteName": null, "value": [],
+      "x": 10, "y": 10, "visible": true },
+    ...
+  ],
+  "extensions": [], "meta": {...}
+}
+
+УПАКОВКА В .sb3:
+with zipfile.ZipFile("merge_show.sb3", "w",
+                    zipfile.ZIP_DEFLATED) as z:
+    z.write("_build/project.json", "project.json")
+    z.write(f"_build/{BACKDROP_ID}.svg", f"{BACKDROP_ID}.svg")
+    z.write(f"_build/{STAR_ID}.svg",     f"{STAR_ID}.svg")
+
+(все три файла — в корне архива, не в подпапке!)
+
+ВЫВОД:
+• Один цельный Python-скрипт без сокращений
+• В конце скрипта печатает: "OK: merge_show.sb3"
+• Никаких комментариев вида "здесь допиши сам"
+• Код должен запускаться как `python merge_show.py`
+  и создавать рабочий .sb3, который Scratch 3 откроет без ошибок
+
+ПРОВЕРКА ПЕРЕД ВЫДАЧЕЙ ОТВЕТА:
+1. Все block_id, на которые ссылаются inputs, есть в blocks
+2. Нет обращений вида [1][1], [1][0] к inputs
+3. Нет opcode с [12, ...] или [13, ...] в inputs
+4. Для каждой ветки if-else её первый блок имеет parent = if-block
+5. Финальный блок цикла (repeat) имеет next = финальный say
+6. SVG-файлы записываются в zip вместе с project.json
