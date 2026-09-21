@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+
+// №1
+void swap(int& a, int& b) {
+    a = a + b; // теперь в a лежит сумма
+    b = a - b; // достаём старое a
+    a = a - b; // достаём старое b
+}
+
+int main() {
+    int a = 4, b = 5;
+    std::cout << "До обмена: a = " << a << ", b = " << b << std::endl;
+    swap(a, b);
+    std::cout << "После обмена: a = " << a << ", b = " << b << std::endl;
+    return 0;
+}
+
+
+
+
+// №2
+unsigned long long calculateFunctionF(int n) {
+    if (n <= 0) return 1; // нулевой случай
+
+    unsigned long long result = 1;      // итоговый результат
+    unsigned long long currentFact = 1; // текущий факториал
+
+    for (int i = 1; i <= n; ++i) {
+        currentFact *= i;      // i! = (i-1)! * i
+        result *= currentFact; // домножаем на i!
+    }
+
+    return result;
+}
+
+int main() {
+    int n = 5;
+    unsigned long long f_n = calculateFunctionF(n);
+    std::cout << "Значение F(" << n << ") = " << f_n << std::endl;
+    return 0;
+}
+
+
+
+
+
+// №5
+int findMissingNumber(const std::vector<int>& nums) {
+    long long n = nums.size(); // размер массива
+    long long expectedSum = n * (n + 1) / 2; // сумма от 0 до n, если бы ничего не потерялось
+    long long actual Sum = 0;
+
+    for (long long num : nums) {
+        actualSum += num; // считаем реальную сумму
+    }
+
+    return static_cast<int>(expectedSum - actualSum); // разница - это и есть пропущенное
+}
+
+int main() {
+    std::vector<int> arr = {9, 6, 4, 2, 3, 5, 7, 0, 1}; // не хватает 8
+    int missing = findMissingNumber(arr);
+    std::cout << "Недостающее число: " << missing << std::endl;
+    return 0;
+}
