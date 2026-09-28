@@ -7,5 +7,5 @@ int main() {
   cin >> b;
 
   hello h(a, b);
-  cout << h.calculate() << endl;
+  cout << hello.calculate() << endl;
 }
