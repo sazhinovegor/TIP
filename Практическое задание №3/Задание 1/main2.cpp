@@ -1,4 +1,4 @@
-#include "hypotenuse.h"
+#include "hi.h"
 #include <iostream>
 using namespace std;
 int main() {
