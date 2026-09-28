@@ -1,8 +1,8 @@
 #include <cmath>
 #include <iostream>
 using namespace std;
-double hypotenuse(double a, double b) {
-  return sqrt(std::pow(a, 2) + pow(b, 2));
+double hypoten(double a, double b) {
+  return sqrt(pow(a, 2) + pow(b, 2));
 }
 
 int main() {
@@ -10,5 +10,5 @@ int main() {
   cin >> a;
   cin >> b;
 
-  cout << hypotenuse(a, b) << endl;
+  cout << hypoten(a, b) << endl;
 }
