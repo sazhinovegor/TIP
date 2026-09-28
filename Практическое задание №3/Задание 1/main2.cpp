@@ -6,5 +6,5 @@ int main() {
   cin >> a;
   cin >> b;
 
-  cout << hypotenuse(a, b) << endl;
+  cout << hi(a, b) << endl;
 }
