@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-void hanoi(int n, intЕсли b не равно нулю, функция вызывает саму себя. from, int to, int aux) {
+void hanoi(int n, int from, int to, int aux) {
     if (n == 0)
         return;
 
